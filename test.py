@@ -9,15 +9,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 import time
 from model import Lenet
-from dataloader_mnist import trainloader, testloader
+from dataloader_mnist import trainloader, testloader, trainset, testset
 
-trans_img = transforms.ToTensor()
 lenet = Lenet()
 lenet.cuda()
-
+learning_rate = 1e-3
+batch_size = 64
 criterian = nn.CrossEntropyLoss(size_average=False)
-optimizer = optim.SGD(lenet.parameters(), lr=learning_rate)
-
 
 lenet.eval()
 
@@ -29,10 +27,10 @@ for (img, label) in testloader:
     
     output = lenet(img)
     loss = criterian(output, label)
-    testloss += loss.data[0]
+    testloss += loss.item()
     _, predict = torch.max(output, 1)
     num_correct = (predict == label).sum()
-    testacc += num_correct.data[0]
+    testacc += num_correct.item()
 
 testloss /= len(testset)
 testacc /= len(testset)
