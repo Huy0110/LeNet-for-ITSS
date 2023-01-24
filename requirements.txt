@@ -4,5 +4,5 @@ torchvision==0.14.1
 visdom==0.2.3
 Pillow==6.2.0
 tensorboard==2.11.0
-python-mnist
+python-mnist==0.7
 #onnx==1.6.0
