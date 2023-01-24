@@ -8,22 +8,48 @@ from torch import optim
 import torch.nn as nn
 import torch.nn.functional as F
 import time
+import argparse
 from torch.utils.tensorboard import SummaryWriter
-writer = SummaryWriter()
+import os
 from model import Lenet
 from dataloader_mnist import trainloader, testloader, trainset, testset
 
-learning_rate = 1e-3
-batch_size = 64
-epoches = 100
+writer = SummaryWriter()
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--learning_rate', required=True, type=float)
+parser.add_argument('--batch_size', required=True, type=int)
+parser.add_argument('--epoches', required=True, type=int)
+parser.add_argument('--opt', required=True, type=str)
+parser.add_argument('--out_dir', required=True, type=str)
+
+learning_rate = vars(parser.parse_args())['learning_rate']
+batch_size = vars(parser.parse_args())['batch_size']
+epoches = vars(parser.parse_args())['epoches']
+opt = vars(parser.parse_args())['opt']
+out_dir = vars(parser.parse_args())['out_dir']
+maxValAcc = 0
+
+if not os.path.isdir(out_dir):
+    os.makedirs(out_dir)
+# learning_rate = 1e-3
+# batch_size = 64
+# epoches = 100
 
 lenet = Lenet()
 print("Model: ", lenet)
 lenet.cuda()
 
 criterian = nn.CrossEntropyLoss()
-# optimizer = optim.SGD(lenet.parameters(), lr=learning_rate, momentum=0.9)
-optimizer = optim.Adam(lenet.parameters(), lr=learning_rate)
+if opt == 'SGD':
+    optimizer = optim.SGD(lenet.parameters(), lr=learning_rate, momentum=0.9)
+elif opt == 'Adam':
+    optimizer = optim.Adam(lenet.parameters(), lr=learning_rate)
+else:
+    printf("INVALID OPTIMIZER\n")
+    printf("CHOSE ADAM OPTIMIZER\\n")
+    optimizer = optim.Adam(lenet.parameters(), lr=learning_rate)
 
 
 
@@ -47,6 +73,7 @@ def validation(i):
     writer.add_scalar('Validation/loss', testloss, i+1)
     writer.add_scalar('Validation/acc', 100*testacc, i+1)
     lenet.train()
+    return testacc
 
 # train
 for i in range(epoches):
@@ -54,10 +81,6 @@ for i in range(epoches):
     running_loss = 0.
     running_acc = 0.
     for (img, label) in trainloader:
-        # print(type(img))
-        # print(img.size())
-        # print(type(label))
-        # print(label.size())
         img = Variable(img).cuda()
         label = Variable(label).cuda()
         
@@ -71,16 +94,18 @@ for i in range(epoches):
         running_loss += loss.item()
         _, predict = torch.max(output, 1)
         correct_num = (predict == label).sum()
-        # print('-------start----------')
-        # print(loss.item())
-        # print(correct_num.item())
-        # print('-------stop-------')
         running_acc += correct_num.item()
     
+    path_save = os.path.join(out_dir, 'epoch_' + str(i) + '.pth')
+    torch.save(lenet.state_dict(), path_save)
     running_loss /= len(trainset)
     running_acc /= len(trainset)
     print("[%d/%d] Loss: %.5f, Acc: %.2f, Time: %.1f s" %(i+1, epoches, running_loss, 100*running_acc, time.time()-since))
-    validation(i)
+    testacc = validation(i)
+    if testacc > maxValAcc :
+        print("Save the best model at epoch %d with acc: %.2f \n" %(i+1, 100*testacc))
+        path_save = os.path.join(out_dir, 'best.pth')
+        torch.save(lenet.state_dict(), path_save)
     writer.add_scalar('Trainning/loss', running_loss, i+1)
     writer.add_scalar('Trainning/acc', 100*running_acc, i+1)
 
