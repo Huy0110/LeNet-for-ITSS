@@ -9,9 +9,22 @@ import torch.nn as nn
 import torch.nn.functional as F
 import time
 
+# from mnist import MNIST as MN2
+
+# mndata = MN2('FlowAllLayers')
+
+# images, labels = mndata.load_testing()
+# print("Label: ",labels)
+# print("Images: ", images)
+# or
+# images, labels = mndata.load_testing()
+
+
 trans_img = transforms.ToTensor()
-trainset = MNIST('./data', train=True, transform=trans_img)
-testset = MNIST('./data', train=False, transform=trans_img)
+trainset = MNIST('./FlowAllLayers', train=True, transform=trans_img)
+testset = MNIST('./FlowAllLayers', train=False, transform=trans_img)
+
+print("test set: ", testset)
 
 batch_size = 64
 
