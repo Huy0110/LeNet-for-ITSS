@@ -11,11 +11,12 @@ import time
 from model import Lenet
 from dataloader_mnist import trainloader, testloader, trainset, testset
 
+path_model = '/root/LeNet-for-ITSS/Checkponts/best.pth'
+
 lenet = Lenet()
+lenet.load_state_dict(torch.load(path_model))
 lenet.cuda()
-learning_rate = 1e-3
-batch_size = 64
-criterian = nn.CrossEntropyLoss(size_average=False)
+criterian = nn.CrossEntropyLoss()
 
 lenet.eval()
 
