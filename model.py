@@ -21,7 +21,7 @@ class Lenet(nn.Module):
         self.fc = nn.Sequential(
             nn.Linear(400, 120),
             nn.Linear(120, 84),
-            nn.Linear(84, 10)
+            nn.Linear(84, 12)
         )
         
         
