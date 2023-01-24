@@ -15,13 +15,16 @@ from dataloader_mnist import trainloader, testloader, trainset, testset
 
 learning_rate = 1e-3
 batch_size = 64
-epoches = 50
+epoches = 100
 
 lenet = Lenet()
+print("Model: ", lenet)
 lenet.cuda()
 
-criterian = nn.CrossEntropyLoss(size_average=False)
-optimizer = optim.SGD(lenet.parameters(), lr=learning_rate)
+criterian = nn.CrossEntropyLoss()
+# optimizer = optim.SGD(lenet.parameters(), lr=learning_rate, momentum=0.9)
+optimizer = optim.Adam(lenet.parameters(), lr=learning_rate)
+
 
 
 def validation(i):
@@ -51,6 +54,10 @@ for i in range(epoches):
     running_loss = 0.
     running_acc = 0.
     for (img, label) in trainloader:
+        # print(type(img))
+        # print(img.size())
+        # print(type(label))
+        # print(label.size())
         img = Variable(img).cuda()
         label = Variable(label).cuda()
         
