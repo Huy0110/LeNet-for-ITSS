@@ -28,7 +28,7 @@ Run this command and you will get your trainning process visualized at http://lo
 $ tensorboard --logdir=runs
 ```
 
-## On remote
+### Visualize on remote
 from your local machine, run
 ```
 ssh -N -f -L localhost:16006:localhost:6006 <user@remote>
