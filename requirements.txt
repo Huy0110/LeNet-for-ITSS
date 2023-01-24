@@ -1,7 +1,7 @@
-numpy>=1.17.0
-torch>=1.4.0
-torchvision>=0.4.0
-visdom>=0.1.6
+numpy==1.24.1
+torch==1.13.1
+torchvision==0.14.1
+visdom==0.2.3
 Pillow==6.2.0
 tensorboard==2.11.0
 python-mnist
