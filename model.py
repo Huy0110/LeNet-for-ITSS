@@ -13,8 +13,8 @@ class Lenet(nn.Module):
         super(Lenet, self).__init__()
 
         self.dilation = nn.Sequential(
-            nn.Conv2d(1, 128, 15, dilation=4),
-            # nn.Conv2d(32, 64, 15, dilation=4),
+            nn.Conv2d(1, 128, 15, dilation=4, padding = 20),
+            nn.Conv2d(128, 32, 3),
             # nn.Conv2d(64, 128, 15, dilation=4)
         )
 
@@ -25,31 +25,31 @@ class Lenet(nn.Module):
         )
 
         self.conv2 = nn.Sequential(
-            nn.Conv2d(64, 128, 3, stride=1, padding=1),
+            nn.Conv2d(64, 128, 3, stride=1, padding=2),
             nn.ReLU(),
             nn.MaxPool2d(3, 2),
         )
         
         self.conv3 = nn.Sequential(
-            nn.Conv2d(128, 256, 3, stride=1, padding=1),
+            nn.Conv2d(128, 256, 3, stride=1, padding=2),
             nn.ReLU(),
             nn.MaxPool2d(3, 2),
         )
         
         self.conv4 = nn.Sequential(
-            nn.Conv2d(256, 512, 3, stride=1, padding=1),
+            nn.Conv2d(256, 512, 3, stride=1, padding=2),
             nn.ReLU(),
             nn.MaxPool2d(3, 2),
         )
 	    
         self.conv5 = nn.Sequential(
-            nn.Conv2d(512, 1024, 3, stride=1, padding=1),
+            nn.Conv2d(512, 1024, 3, stride=1, padding=2),
             nn.ReLU(),
             nn.MaxPool2d(3, 2),
         )
         
         self.dense = nn.Sequential(
-            nn.Linear(512, 120),
+            nn.Linear(1024, 120),
             nn.Dropout(p=0.75),
             nn.Linear(120, 84),
             nn.Linear(84, 12)
@@ -73,12 +73,19 @@ class Lenet(nn.Module):
         # out = self.conv(x)
         # out = out.view(out.size(0), -1)
         # out = self.fc(out)
+        # print("Input: ", x.size())
         out = self.dilation(x)
-        out = self.conv1(x)
-        out = self.conv2(x)
-        out = self.conv3(x)
-        out = self.conv4(x)
-        out = self.conv5(x)
+        # print("After dilation: ",out.size())
+        out = self.conv1(out)
+        # print("After conv1: ", out.size())
+        out = self.conv2(out)
+        # print("After conv2: ", out.size())
+        out = self.conv3(out)
+        # print("After conv3: ", out.size())
+        out = self.conv4(out)
+        # print("After conv4: ", out.size())
+        out = self.conv5(out)
         out = out.view(out.size(0), -1)
+        # print("After view: ", out.size())
         out = self.dense(out)
         return out
