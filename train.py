@@ -103,6 +103,7 @@ for i in range(epoches):
     print("[%d/%d] Loss: %.5f, Acc: %.2f, Time: %.1f s" %(i+1, epoches, running_loss, 100*running_acc, time.time()-since))
     testacc = validation(i)
     if testacc > maxValAcc :
+        maxValAcc = testacc
         print("Save the best model at epoch %d with acc: %.2f \n" %(i+1, 100*testacc))
         path_save = os.path.join(out_dir, 'best.pth')
         torch.save(lenet.state_dict(), path_save)
