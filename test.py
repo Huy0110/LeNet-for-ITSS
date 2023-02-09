@@ -52,12 +52,12 @@ testloss /= len(testset)
 testacc /= len(testset)
 print("Test: Loss: %.5f, Acc: %.2f %%" %(testloss, 100*testacc))
 
-classes = {0:'Chat',1:'Email',2:'File',3:'P2p',4:'Streaming',5:'Voip',6:'Vpn_Chat',7:'Vpn_Email',8:'Vpn_File',9:'Vpn_P2p',10:'Vpn_Streaming',11:'Vpn_Voip'}
+classes = ('Chat','Email','File','P2p','Streaming','Voip','Vpn_Chat','Vpn_Email','Vpn_File','Vpn_P2p','Vpn_Streaming','Vpn_Voip')
 
 # Build confusion matrix
 cf_matrix = confusion_matrix(y_true, y_pred)
-df_cm = pd.DataFrame(cf_matrix / np.sum(cf_matrix, axis=1), index = [classes[i] for i in classes],
-                     columns = [classes[i] for i in classes])
+df_cm = pd.DataFrame(cf_matrix / np.sum(cf_matrix, axis=1), index = [i for i in classes],
+                     columns = [i for i in classes])
 plt.figure(figsize = (12,7))
 sn.heatmap(df_cm, annot=True)
-plt.savefig('output.png')
+plt.savefig('output_old.png')
